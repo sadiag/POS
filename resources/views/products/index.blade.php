@@ -1,9 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Product List')
 
-@section('css')
-<link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
-@endsection
 
 @section('content')
 <div class="card">
@@ -11,7 +8,10 @@
     
         <h3>Product List</h3>
         <a class="btn btn-primary float-right mb-4" href="{{route('products.create')}}">Create Product</a>
-       
+        @section('css')
+     <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
+    @endsection
+
      <table class="table">
       <thead>
          <tr>
@@ -59,6 +59,7 @@
 <script>
     $(document).ready(function () {
         $(document).on('click', '.btn-delete', function (){
+          $this = $(this);
             const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
@@ -69,21 +70,23 @@
 
 swalWithBootstrapButtons.fire({
   title: 'Are you sure?',
-  text: "You won't be able to revert this!",
+  text: "do you want to delete!",
   icon: 'warning',
   showCancelButton: true,
   confirmButtonText: 'Yes, delete it!',
-  cancelButtonText: 'No, cancel!',
+  cancelButtonText: 'No',
   reverseButtons: true
 }).then((result) => {
-  if (result.isConfirmed) {
-    swalWithBootstrapButtons.fire(
-      'Deleted!',
-      'Your file has been deleted.',
-      'success'
-    )
-  } 
-})
+  if(result.value) {
+    $.post($this.data('url'), {_method: 'DELETE'}, function (res){
+      $this.closest('tr').fadeOut(500, function () {
+
+        $(this).remove();
+      })
+    })
+  }
+   
+    })
         })
     })
     </script>
